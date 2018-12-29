@@ -1,0 +1,9 @@
+i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\bin\Debug\golyos_jatek.exe
+i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\bin\Debug\golyos_jatek.pdb
+i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\obj\x86\Debug\golyos_jatek.csprojAssemblyReference.cache
+i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\obj\x86\Debug\golyos_jatek.golyo.resources
+i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\obj\x86\Debug\golyos_jatek.Properties.Resources.resources
+i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\obj\x86\Debug\golyos_jatek.csproj.GenerateResource.cache
+i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\obj\x86\Debug\golyos_jatek.csproj.CoreCompileInputs.cache
+i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\obj\x86\Debug\golyos_jatek.exe
+i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\obj\x86\Debug\golyos_jatek.pdb
