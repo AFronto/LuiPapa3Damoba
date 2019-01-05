@@ -15,7 +15,7 @@ namespace golyos_jatek
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new golyo());
+            Application.Run(new UI());
         }
     }
 }

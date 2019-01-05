@@ -1,6 +1,6 @@
 ﻿namespace golyos_jatek
 {
-    partial class golyo
+    partial class UI
     {
         /// <summary>
         /// Required designer variable.
@@ -694,8 +694,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1184, 662);
             this.Controls.Add(this.label28);
-            this.Controls.Add(this.button6);
-            this.Controls.Add(this.button5);
             this.Controls.Add(this.label27);
             this.Controls.Add(this.label26);
             this.Controls.Add(this.label25);
@@ -711,6 +709,8 @@
             this.Controls.Add(this.label17);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
+            this.Controls.Add(this.button6);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label14);

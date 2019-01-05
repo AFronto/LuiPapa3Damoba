@@ -10,23 +10,35 @@ using System.IO;
 
 namespace golyos_jatek
 {
-    public partial class golyo : Form
+    public partial class UI : Form
     {
-        public golyo(){ InitializeComponent(); }
+        Graphics g;
+        Rectangle r;
+        Pen p;
+        SolidBrush ecset;
+        private String verzio = " Golyós játék   Verzió: otello_1.2 "; // verzió szám
+        private GameTable gameTable;
+        List<char> readingOrder;
 
-        Graphics g; Rectangle r; Pen p; SolidBrush ecset;
-        static String verzio = " Golyós játék   Verzió: otello_1.2 "; // verzió szám
-        static String konyvtar = "F:\\golyo\\"; // ebbe a könyvtárba menti a partikat és az elemzéseket
-        static byte[] piros = new byte[65]; //1-64 helyek közül 0, ha üres és 1 ha van rajta piros golyó
-        static byte[] kek = new byte[65];  //1-64 helyek közül 0, ha üres és 1 ha van rajta kék golyó
-        static Int16[] rudx = new Int16[17];  //kijelzéshez szükséges x koordinátát tartalmazza
-        static Int16[] rudy = new Int16[17];  //kijelzéshez szükséges y koordinátát tartalmazza
+        private int[] rudx = new int[16];  //kijelzéshez szükséges x koordinátát tartalmazza
+        private int[] rudy = new int[16];  //kijelzéshez szükséges y koordinátát tartalmazza
+
+        private Player piros; //Players are entities so they are represented with a class
+        private Player kek;  //Players are entities so they are represented with a class
+
+
+        // static String konyvtar = "F:\\golyo\\"; // ebbe a könyvtárba menti a partikat és az elemzéseket
+
+
         static Int16[] hx = new Int16[65];
         static Int16[] hy = new Int16[65];
         static char[,] rudfelirat = new char[4, 17];
+
         static string[] kod = new string[65];//1,17,33,49:'A1-4'; 2,18,34,50:'B1-4'
+
         static byte[] kij = new byte[65]; // 0:üres; 1: piros; 2: kék;
         static byte[] t = new byte[65]; //1-64 poz értékek 0: ha üres; 1: ha piros; 2: ha kék
+
         static byte[,] hianydb = new byte[65, 5]; //hiany db szám kiszámításában segéd tábla 
         static byte kijvez = 0; //0: kiinduló állapot; 1: j1; 2: j2; 3: j3;
         static byte[,] kijtolt = new byte[4, 65];//első index a kijvez; második index az adott hely elforgatva
@@ -49,9 +61,11 @@ namespace golyos_jatek
         static byte[,] er4 = new byte[256, 8]; //elemzésnél infokat tartalmaz, a rúdra még négy golyó rakható
 
         static Int16[] suly = new Int16[22];
+
         static Int16 visszap = 0; //piros visszavon lépést
         static Int16 visszak = 0; // kék visszavon lépést
         static Int16 visszadb = 0; //  visszavonás után számláló
+
         static byte hianylepsz = 0;
         static byte egy = 0;
         static byte p0 = 0; // egyenes vizsgálandó pontja
@@ -191,6 +205,24 @@ namespace golyos_jatek
         Boolean g3tov = true;
         Boolean j3tov = true;
 
+
+
+        public UI() {
+
+            piros = new Player("Alma", "Piros");
+            kek = new Player("Korte", "Kek");
+
+            gameTable = new GameTable(piros,kek);
+            readingOrder = new List<char>();
+            for (int i= 0;i < 16; i++)
+            {
+                readingOrder.Add((char)('A'+i));
+                Console.WriteLine((char)('A' + i));         //TODO: check if works!!
+            }
+
+            InitializeComponent();
+        }
+
         public void teglalap(Brush b, Int16 x1, Int16 y1, Int16 x2, Int16 y2, byte vv)
         { g = CreateGraphics(); p = new Pen(b); p.Width = vv; r = new Rectangle(x1, y1, x2, y2); g.DrawRectangle(p, r); }
 
@@ -199,17 +231,20 @@ namespace golyos_jatek
 
         public void kor(Color ecs, Int16 x1, Int16 y1, Int16 x2, Int16 y2)
         { g = CreateGraphics(); p = new Pen(ecs); g.DrawEllipse(p, x1, y1, x2, y2); }
-        public void korlap(Color ecs, Int16 x1, Int16 y1, Int16 x2, Int16 y2)
+
+        public void korlap(Color ecs, int x1, int y1, int x2, int y2)
         { g = CreateGraphics(); ecset = new SolidBrush(ecs); g.FillEllipse(ecset, x1, y1, x2, y2); }
-        public void vonal(Brush b, Int16 x1, Int16 y1, Int16 x2, Int16 y2, byte vv)
+
+        public void vonal(Brush b, int x1, int y1, int x2, int y2, byte vv)
         { g = CreateGraphics(); p = new Pen(b); p.Width = vv; g.DrawLine(p, x1, y1, x2, y2); }
 
-        private void frissit()
+        public void Refresh()
         {
-            byte ertek = 0; byte k0 = 0; byte k1 = 0; byte k2 = 0; byte k3 = 0; byte k4 = 0; byte db = 0; Boolean ell = false;
-            Int16 x3 = 0; Int16 x4 = 0; Int16 y3 = 0; Int16 y4 = 0;
-            Color hatter = BackColor; szov28 = Convert.ToString(DateTime.Now);
+            Color hatter = BackColor;
+            szov28 = Convert.ToString(DateTime.Now);
+
             tegla(hatter, 2, 28, 630, 602);
+
             label1.Text = Convert.ToString(rudfelirat[kijvez, 1]); label2.Text = Convert.ToString(rudfelirat[kijvez, 2]);
             label3.Text = Convert.ToString(rudfelirat[kijvez, 3]); label4.Text = Convert.ToString(rudfelirat[kijvez, 4]);
             label5.Text = Convert.ToString(rudfelirat[kijvez, 5]); label6.Text = Convert.ToString(rudfelirat[kijvez, 6]);
@@ -224,42 +259,43 @@ namespace golyos_jatek
             vonal(Brushes.Brown, 10, 240, 10, 280, 2); vonal(Brushes.Brown, 178, 560, 178, 600, 2);
             vonal(Brushes.Brown, 627, 560, 627, 600, 2); vonal(Brushes.Brown, 10, 280, 178, 600, 2);
             vonal(Brushes.Brown, 178, 600, 627, 600, 2);
-            for (byte i = 1; i < 17; i++)
-            { x3 = rudx[i]; y3 = rudy[i]; x4 = x3; y4 = y3; y4 += 180; vonal(Brushes.Black, x3, y3, x4, y4, 5); }
-            for (byte i = 1; i < 65; i++)
+
+            for (int i = 0; i < 16; i++)
             {
-                ertek = 0; k1 = kijtolt[kijvez, i];
-                if (piros[k1] == 1) { ertek = 1; };
-                if (kek[k1] == 1) { ertek = 2; };
-                kij[i] = ertek;
-                if (kij[0] == k1) { k2 = i; }
-                if (piros[i] == 1) { if (t[i] != 1) { ell = true; }; };
-                if (kek[i] == 1) { if (t[i] != 2) { ell = true; }; };
+                vonal(Brushes.Black, rudx[i], rudy[i], rudx[i], (rudy[i] + 180), 5);
             }
-            for (byte i = 1; i < 65; i++)
+
+            int poleCounter = 0;
+            foreach (char key in readingOrder)
             {
-                if (kij[i] == 1) { korlap(Color.Red, hx[i], hy[i], 32, 40); };
-                if (kij[i] == 2) { korlap(Color.Blue, hx[i], hy[i], 32, 40); };
+                for (int i = 0; i<gameTable.Table[""+key].Count; i++)
+                {
+                    if (gameTable.Table["" + key][i])
+                    {
+                        korlap(Color.Blue, rudx[poleCounter]-16, rudy[poleCounter]+140-i*40, 32, 40);
+                    }
+                    else {
+                        korlap(Color.Red, rudx[poleCounter] - 16, rudy[poleCounter] + 140 - i * 40, 32, 40);
+                    }
+                    
+                }
+                poleCounter++;
             }
-            if (kij[0] != 0) { x3 = hx[k2]; y3 = hy[k2]; x3--; y3--; kor(Color.Yellow, hx[k2], hy[k2], 32, 40); kor(Color.Yellow, x3, y3, 34, 42); x3--; y3--; kor(Color.Yellow, x3, y3, 36, 44); }
-            if (visszadb == 0) { szov18 = ""; }
-            if (visszadb > 0) { visszadb--; }
-            if ((pgyoz) && (visszap > 0)) { visszap = 0; erpiros--; szov17 = "Visszalépés miatt a győzelemért csak 1 pont jár!"; }
-            if ((kgyoz) && (visszak > 0)) { visszak = 0; erkek--; szov17 = "Visszalépés miatt a győzelemért csak 1 pont jár!"; }
-            if (jj)
+
+            //TODO: Make the lastmove yellow
+
+            if (piros.Moves.Count+kek.Moves.Count >= 4) {
+                button6.Enabled = true;
+                button6.Visible = true;
+            }
+            else
             {
-                label22.Text = "Piros: Játékos " + jatekos1 + " - Kék: Játékos " + jatekos2;
-                label21.Text = "Állás: Piros Játékos " + jatekos1 + " - Kék: Játékos " + jatekos2 + " : " + Convert.ToString(erpiros) + " - " + Convert.ToString(erkek);
+                button6.Enabled = false;
+                button6.Visible = false;
             }
-            if (jsz)
-            {
-                label22.Text = "Piros: Játékos " + jatekos1 + " - Kék: Sámítógép / Szint:" + szintkijel;
-                label21.Text= "Állás: Piros Játékos " + jatekos1 + " - Kék: Számítógép : " + Convert.ToString(erpiros) + " - " + Convert.ToString(erkek);
-            }
-            p0 = lepszamlp; p0 += lepszamlk;  
-            if (p0 >4) { button6.Enabled = true; button6.Visible = true; }
-            else { button6.Enabled = false; button6.Visible = false; }
-            if (pgyoz | kgyoz)
+
+
+            /*if (pgyoz | kgyoz)
             {
                 for (byte i = 1; i <= 7; i++) { if (gyozegy[i] > 0) { db++; }; }
                 for (byte j = 1; db >= j; j++)
@@ -275,150 +311,15 @@ namespace golyos_jatek
                     vonal(Brushes.White, x3, y3, x4, y4, 2); button6.Enabled = false; button6.Visible = false;
 
                 }
-            }
+            }*/ //TODO: white line
 
-            label23.Text = szov23; label24.Text = szov24; label25.Text = szov25; label26.Text = szov26; label27.Text = szov27; label28.Text = szov28; label17.Text = szov17; label18.Text = szov18;  
-           if (p0 >= 64) { button6.Enabled = false; button6.Visible = false; }       
+            //TODO: refresh stats for winning should be done elsewhere maybe white line too 
+
+            //TODO: delete warning messages after some moves
+
+
+
         }
-
-        private void kezd()
-        {
-            byte i1 = 0; szov17 = "Győzelem 2 pont. Döntetlen 1 pont."; dontetlen = false; pgyoz = false; kgyoz = false;
-            button5.Visible = false; button5.Enabled = false; button6.Visible = false; button6.Enabled = false;
-            kijvez = 0; kij[0] = 0; visszadb = 0; visszak = 0; visszap=0;
-            for (byte i = 1; i < 65; i++) { kij[i] = 0; kek[i] = 0; piros[i] = 0; t[i] = 0; }
-            for (byte i = 1; i < 33; i++) { piroslep[i] = 0; keklep[i] = 0; }
-            for (byte i = 1; i < 17; i++) { rud[i, 0] = 4; rud[i, 1] = i; pozrud[i] = i; i1 = i; i1 += 16; pozrud[i1] = i; i1 += 16; pozrud[i1] = i; i1 += 16; pozrud[i1] = i; }
-            for (byte i = 1; i < 77; i++) { kv[i, 0] = 1; kv[i, 1] = 0; kv[i, 2] = 0; pv[i, 0] = 1; pv[i, 1] = 0; pv[i, 2] = 0; }
-            button2.Enabled = true; button2.Visible = true; button3.Enabled = true; button3.Visible = true;
-            label1.Visible = true; label2.Visible = true; label3.Visible = true; label4.Visible = true; label5.Visible = true;
-            label6.Visible = true; label7.Visible = true; label8.Visible = true; label9.Visible = true; label10.Visible = true;
-            label11.Visible = true; label12.Visible = true; label13.Visible = true; label14.Visible = true; label15.Visible = true;
-            label16.Visible = true; label17.Visible = true; label18.Visible = true; label19.Visible = true; label20.Visible = true;
-            label21.Visible = true; label22.Visible = true; label23.Visible = true; label24.Visible = true; label25.Visible = true;
-            label26.Visible = true; label27.Visible = true; label28.Visible = true; label28.Visible = true;
-            lepszamlp = 0; lepszamlk = 0; valaszthat = true; label18.Text = ""; szov18 = "";
-            plepsor = "Piros lépései:"; klepsor = "  Kék lépései:"; szov26 = plepsor; szov27 = klepsor; label27.Text = klepsor;
-            if (kekkezd)
-            {
-                plepsor += " -- ";
-                if (jsz)
-                {
-                    kek[1] = 1; lepszamlk++; keklep[lepszamlk] = 1; klepsor += " A1";
-                    label27.Text = klepsor; label24.Text = ""; label25.Text = "Kék utolsó lépése: A1";
-                    for (byte i = 1; i < 8; i++)
-                    {
-                        i1 = pozszab[1, i]; if (i1 > 0) { kv[i1, 1]++; pv[i1, 0] = 0; }
-                    }
-                    rud[1, 0]--; rud[1, 1] += 16; kij[0] = 1; vez = 3; 
-                    szov23 = "Piros játékos " + jatekos1 + " lép. Klikkelj a kiválasztott rúd betűjelére..."; valaszthat = true;
-                }
-                if (jj) { szov23 = "Kék játékos kezd, " + jatekos2 + " lép. Klikkelj a kiválasztott rúd betűjelére..."; vez = 2; valaszthat = true; }
-            }
-            else
-            {
-                klepsor += " -- "; 
-                if (jsz) { szov23 = "Piros játékos kezd, " + jatekos1 + " lép. Klikkelj a kiválasztott rúd betűjelére..."; vez = 3; valaszthat = true; }
-                if (jj) { szov23 = "Piros játékos kezd, " + jatekos1 + " lép. Klikkelj a kiválasztott rúd betűjelére..."; vez = 1; valaszthat = true; }
-            }
-            szov24 = ""; szov25 = ""; for (byte i = 1; i < 8; i++) { gyozegy[i] = 0; } pgyoz = false; kgyoz = false; frissit();
-        }
-
-        private void valaszt()
-        {
-            kivjo = kijtolt[kijvez, kiv]; valaszthat = false;
-            switch (vez)
-            {
-                case 1: leppiroskek(); break;
-                case 2: lepkek(); break;
-                case 3: leppiros(); break;
-                default: break;
-            }
-        }
-
-        private void leppiroskek() //vez=1 bemenő adat=kivjo piros a kék játékos lépéseire válaszol
-        {
-            byte lep1 = 0; byte k1 = 0; byte k2 = 0; 
-            if (rud[kivjo, 0] > 0)
-            {
-                lep1 = rud[kivjo, 1]; rud[kivjo, 0]--; rud[kivjo, 1] += 16; piros[lep1] = 1; lepszamlp++; piroslep[lepszamlp] = lep1; t[lep1] = 1;
-                plepsor += " " + kod[lep1]; szov26 = plepsor; szov24 = ""; szov25 = "Piros utolsó lépése: " + kod[lep1]; 
-                for (byte i = 1; i <= poz[lep1]; i++)
-                {
-                    k1 = pozszab[lep1, i]; kv[k1, 0] = 0;
-                    if (pv[k1, 0] == 1) { pv[k1, 1]++; if (pv[k1, 1] == 4) { pgyoz = true; k2++; gyozegy[k2] = k1; } }
-                }
-                kij[0] = lep1; frissit();
-                if (pgyoz)
-                { szov23 = "Piros Nyert!"; erpiros += 2; vez = 6; button5.Enabled = true; button5.Visible = true; }
-                else
-                {
-                    k2 = lepszamlp; k2 += lepszamlk;
-                    if (k2 == 64) { szov23 = "Döntetlen..."; dontetlen = true; erpiros++; erkek++; vez = 6; button5.Enabled = true; button5.Visible = true; };
-                    if (vez == 1) { vez = 2; szov23 = "Kék játékos / " + jatekos2 + " lép. Klikkelj a kiválasztott rúd betűjelére..."; valaszthat = true; };
-                }
-            }
-            else
-            { szov24 = "Több golyó nem helyezhető a(z) " + rudfelirat[kijvez, kiv] + " rúdra!"; valaszthat = true; }
-            frissit();
-        }
-
-        private void lepkek() //vez=2 játékos2 lép kékkel...
-        {
-            byte lep1 = 0; byte k1 = 0; byte k2 = 0; 
-            if (rud[kivjo, 0] > 0)
-            {
-                lep1 = rud[kivjo, 1]; rud[kivjo, 0]--; rud[kivjo, 1] += 16; kek[lep1] = 1; lepszamlk++; keklep[lepszamlk] = lep1; t[lep1] = 2;
-                klepsor += " " + kod[lep1]; szov27 = klepsor; szov24 = ""; szov25 = "Kék utolsó lépése: " + kod[lep1]; 
-                for (byte i = 1; i <= poz[lep1]; i++)
-                {
-                    k1 = pozszab[lep1, i]; pv[k1, 0] = 0;
-                    if (kv[k1, 0] == 1) { kv[k1, 1]++; if (kv[k1, 1] == 4) { kgyoz = true; k2++; gyozegy[k2] = k1; } }
-                }
-                kij[0] = lep1; p1 = 2; p2 = 2; p3 = Convert.ToByte(p2 / 16); // label18.Text = Convert.ToString(p3);
-                if (kgyoz)
-                { szov23 = "Kék Nyert!"; erkek += 2; vez = 6; button5.Enabled = true; button5.Visible = true; }
-                else
-                {
-                    k2 = lepszamlp; k2 += lepszamlk;
-                    if (k2 == 64) { szov23 = "Döntetlen..."; dontetlen = true; erpiros++; erkek++; vez = 6; button5.Enabled = true; button5.Visible = true; };
-                    vez = 1; szov23 = "Piros játékos " + jatekos1 + " lép. Klikkelj a kiválasztott rúd betűjelére..."; valaszthat = true;
-                }
-            }
-            else
-            { szov24 = "Több golyó nem helyezhető a(z) " + rudfelirat[kijvez, kiv] + " rúdra!"; valaszthat = true; }
-            frissit();
-        }
-
-        private void leppiros() // vagy vez=3 bemenő adat=kivjo
-        {
-            byte lep1 = 0; byte k1 = 0; byte k2 = 0; tovpir = true;
-            if (rud[kivjo, 0] > 0)
-            {
-                lep1 = rud[kivjo, 1]; rud[kivjo, 0]--; rud[kivjo, 1] += 16; piros[lep1] = 1; lepszamlp++; piroslep[lepszamlp] = lep1; t[lep1] = 1;
-                if (halado) { szov23 = "Számítógép keresi a választ, ..."; };
-                if (mester) { szov23 = "Számítógép keresi a választ, 4-5 perc ..."; };
-               
-                plepsor += " " + kod[lep1]; szov26 = plepsor; szov24 = ""; szov25 = "Piros utolsó lépése: " + kod[lep1];
-                for (byte i = 1; i <= poz[lep1]; i++)
-                {
-                    k1 = pozszab[lep1, i]; kv[k1, 0] = 0;
-                    if (pv[k1, 0] == 1) { pv[k1, 1]++; if (pv[k1, 1] == 4) { pgyoz = true; k2++; gyozegy[k2] = k1; } }
-                }
-                kij[0] = lep1; 
-                if (pgyoz) { szov23 = "Piros Nyert!"; erpiros += 2; vez = 6; button5.Enabled = true; button5.Visible = true; tovpir = false; }
-                if (tovpir)
-                {
-                    k2 = lepszamlp; k2 += lepszamlk;
-                    if (k2 == 64) { szov23 = "Döntetlen..."; dontetlen = true; erpiros++; erkek++; vez = 6; button5.Enabled = true; button5.Visible = true; tovpir = false; }
-                }
-                if (tovpir) { timer2.Enabled = true; }
-            }
-            else
-            { szov24 = "Több golyó nem helyezhető a(z) " + rudfelirat[kijvez, kiv] + " rúdra!"; valaszthat = true; }
-            tovpir = false;  frissit();
-        }
-
       
         private void hiany() // bemenet: egy; kimenet: hianylepsz; (ha egy egyenesen már van három golyó!!!)
         {
@@ -1422,11 +1323,24 @@ namespace golyos_jatek
         private void kezd0()
         {
             timer1.Enabled = false;
-            byte sz1 = 0; byte sz2 = 0; byte i1 = 0; byte i2 = 0; this.Text = verzio; 
-            rudx[1] = 182; rudy[1] = 340; rudx[2] = 308; rudy[2] = 340; rudx[3] = 434; rudy[3] = 340; rudx[4] = 560; rudy[4] = 340; //rúdak x-y koordinátái
-            rudx[5] = 140; rudy[5] = 260; rudx[6] = 266; rudy[6] = 260; rudx[7] = 392; rudy[7] = 260; rudx[8] = 518; rudy[8] = 260;
-            rudx[9] = 98; rudy[9] = 180; rudx[10] = 224; rudy[10] = 180; rudx[11] = 350; rudy[11] = 180; rudx[12] = 476; rudy[12] = 180;
-            rudx[13] = 56; rudy[13] = 100; rudx[14] = 182; rudy[14] = 100; rudx[15] = 308; rudy[15] = 100; rudx[16] = 434; rudy[16] = 100;
+            byte sz1 = 0; byte sz2 = 0; byte i1 = 0; byte i2 = 0; this.Text = verzio;
+
+            
+            int yValue = 340;
+            for (int i=0; i<4; i++)
+            {
+                int xValue = 182-42*i;
+                for (int j=0; j<4; j++)
+                {
+                    rudx[i*4+j] = xValue;
+                    rudy[i*4+j] = yValue;
+
+                    xValue += 126;
+                }
+                yValue -= 80;                
+            }
+
+
             suly[0] = 30000; //K+  győzelem egy lépésben
             suly[1] = -27000; // J-  győzelem egy lépésben
             suly[2] = 25000; //K+ nyerő kombináció (az ellenfélnek egyszerre kettőt kell tennie)
@@ -1449,22 +1363,28 @@ namespace golyos_jatek
             suly[19] = -45; // K+ tilt lépések száma
             suly[20] = 50; // K+ lépés pozicíó
             suly[21] = -45; // P- lépés pozicíó
+
             hx[1] = rudx[1]; hx[1] -= 16; hy[1] = rudy[1]; hy[1] += 140; //hx[k] k. pozíció x koordinátája, hy[k] k. pozíció y koordinátája
+
             hx[17] = hx[1]; hy[17] = rudy[1]; hy[17] += 100;
             hx[33] = hx[1]; hy[33] = rudy[1]; hy[33] += 60;
             hx[49] = hx[1]; hy[49] = rudy[1]; hy[49] += 20;
+
             hx[2] = rudx[2]; hx[2] -= 16; hy[2] = rudy[2]; hy[2] += 140;
             hx[18] = hx[2]; hy[18] = rudy[2]; hy[18] += 100;
             hx[34] = hx[2]; hy[34] = rudy[2]; hy[34] += 60;
             hx[50] = hx[2]; hy[50] = rudy[2]; hy[50] += 20;
+
             hx[3] = rudx[3]; hx[3] -= 16; hy[3] = rudy[3]; hy[3] += 140;
             hx[19] = hx[3]; hy[19] = rudy[3]; hy[19] += 100;
             hx[35] = hx[3]; hy[35] = rudy[3]; hy[35] += 60;
             hx[51] = hx[3]; hy[51] = rudy[3]; hy[51] += 20;
+
             hx[4] = rudx[4]; hx[4] -= 16; hy[4] = rudy[4]; hy[4] += 140;
             hx[20] = hx[4]; hy[20] = rudy[4]; hy[20] += 100;
             hx[36] = hx[4]; hy[36] = rudy[4]; hy[36] += 60;
             hx[52] = hx[4]; hy[52] = rudy[4]; hy[52] += 20;
+
             hx[5] = rudx[5]; hx[5] -= 16; hy[5] = rudy[5]; hy[5] += 140;
             hx[21] = hx[5]; hy[21] = rudy[5]; hy[21] += 100;
             hx[37] = hx[5]; hy[37] = rudy[5]; hy[37] += 60;
@@ -1513,6 +1433,7 @@ namespace golyos_jatek
             hx[32] = hx[16]; hy[32] = rudy[16]; hy[32] += 100;
             hx[48] = hx[16]; hy[48] = rudy[16]; hy[48] += 60;
             hx[64] = hx[16]; hy[64] = rudy[16]; hy[64] += 20;
+
             rudfelirat[0, 1] = 'A'; rudfelirat[0, 2] = 'B'; rudfelirat[0, 3] = 'C'; rudfelirat[0, 4] = 'D';
             rudfelirat[0, 5] = 'E'; rudfelirat[0, 6] = 'F'; rudfelirat[0, 7] = 'G'; rudfelirat[0, 8] = 'H';
             rudfelirat[0, 9] = 'I'; rudfelirat[0, 10] = 'J'; rudfelirat[0, 11] = 'K'; rudfelirat[0, 12] = 'L';

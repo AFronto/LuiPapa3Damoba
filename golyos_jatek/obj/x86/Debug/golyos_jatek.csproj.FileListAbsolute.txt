@@ -7,3 +7,12 @@ i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\obj\x86\Debug\g
 i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\obj\x86\Debug\golyos_jatek.csproj.CoreCompileInputs.cache
 i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\obj\x86\Debug\golyos_jatek.exe
 i:\Personal_Projects\Lajos\Apa program\golyos_jatek\golyos_jatek\obj\x86\Debug\golyos_jatek.pdb
+I:\Personal_Projects\Lajos\Apa program\gitGolyos\LuiPapa3Damoba\golyos_jatek\obj\x86\Debug\golyos_jatek.csprojAssemblyReference.cache
+I:\Personal_Projects\Lajos\Apa program\gitGolyos\LuiPapa3Damoba\golyos_jatek\obj\x86\Debug\golyos_jatek.UI.resources
+I:\Personal_Projects\Lajos\Apa program\gitGolyos\LuiPapa3Damoba\golyos_jatek\obj\x86\Debug\golyos_jatek.Properties.Resources.resources
+I:\Personal_Projects\Lajos\Apa program\gitGolyos\LuiPapa3Damoba\golyos_jatek\obj\x86\Debug\golyos_jatek.csproj.GenerateResource.cache
+I:\Personal_Projects\Lajos\Apa program\gitGolyos\LuiPapa3Damoba\golyos_jatek\obj\x86\Debug\golyos_jatek.csproj.CoreCompileInputs.cache
+I:\Personal_Projects\Lajos\Apa program\gitGolyos\LuiPapa3Damoba\golyos_jatek\obj\x86\Debug\golyos_jatek.exe
+I:\Personal_Projects\Lajos\Apa program\gitGolyos\LuiPapa3Damoba\golyos_jatek\obj\x86\Debug\golyos_jatek.pdb
+I:\Personal_Projects\Lajos\Apa program\gitGolyos\LuiPapa3Damoba\golyos_jatek\bin\Debug\golyos_jatek.exe
+I:\Personal_Projects\Lajos\Apa program\gitGolyos\LuiPapa3Damoba\golyos_jatek\bin\Debug\golyos_jatek.pdb
